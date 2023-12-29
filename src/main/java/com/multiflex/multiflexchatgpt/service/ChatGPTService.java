@@ -1,6 +1,10 @@
 package com.multiflex.multiflexchatgpt.service;
 
+import com.multiflex.multiflexchatgpt.dto.CompletionRequestDto;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Please explain the class!!
@@ -13,6 +17,9 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ChatGPTService {
 
-    Object selectChatGPTModelList();
+
+    List<Map<String, Object>> modelList();
+
+    Map<String, Object> createCompletion(CompletionRequestDto completionRequestDto);
 
 }
