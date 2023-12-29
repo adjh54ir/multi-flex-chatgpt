@@ -1,0 +1,3 @@
+openai:
+  model: gpt-3.5-turbo
+  secret-key: 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
