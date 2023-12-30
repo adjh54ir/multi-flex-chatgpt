@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Please explain the class!!
+ * ChatGPT API
  *
  * @author : lee
  * @fileName : ChatGPTController
@@ -26,8 +26,23 @@ public class ChatGPTController {
         this.chatGPTService = chatGPTService;
     }
 
+    /**
+     * [API] ChatGPT 모델 리스트를 조회합니다.
+     */
+    @GetMapping("/modelList")
+    public ResponseEntity<List<Map<String, Object>>> selectModelList() {
+        List<Map<String, Object>> result = chatGPTService.modelList();
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * [API] ChatGPT 유효한 모델인지 조회합니다.
+     *
+     * @param modelName
+     * @return
+     */
     @GetMapping("/model")
-    public ResponseEntity<Map<String, Object>> selectModel(@RequestParam(name = "modelName") String modelName) {
+    public ResponseEntity<Map<String, Object>> isValidModel(@RequestParam(name = "modelName") String modelName) {
         Map<String, Object> result = chatGPTService.isValidModel(modelName);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -35,18 +50,11 @@ public class ChatGPTController {
     /**
      * [API] ChatGPT 모델 리스트를 조회합니다.
      */
-    @PostMapping("/completion")
-    public ResponseEntity<Map<String, Object>> selectCodeList(@RequestBody CompletionRequestDto completionRequestDto) {
-        Map<String, Object> result = chatGPTService.createCompletion(completionRequestDto);
+    @PostMapping("/prompt")
+    public ResponseEntity<Map<String, Object>> selectPrompt(@RequestBody CompletionRequestDto completionRequestDto) {
+        Map<String, Object> result = chatGPTService.prompt(completionRequestDto);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    /**
-     * [API] ChatGPT 모델 리스트를 조회합니다.
-     */
-    @PostMapping("/modelList")
-    public ResponseEntity<List<Map<String, Object>>> selectCodeList() {
-        List<Map<String, Object>> result = chatGPTService.modelList();
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
+
 }

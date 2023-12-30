@@ -1,11 +1,12 @@
 package com.multiflex.multiflexchatgpt.dto;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Please explain the class!!
+ * 프롬프트 요청 DTO
  *
  * @author : lee
  * @fileName : CompletionRequestDto
@@ -19,15 +20,14 @@ public class CompletionRequestDto {
 
     private String prompt;
 
-    private int temperature;
+    private float temperature;
 
-    private int max_tokens;
 
-    CompletionRequestDto(String model, String prompt, int temperature, int max_tokens) {
+    @Builder
+    CompletionRequestDto(String model, String prompt, float temperature) {
         this.model = model;
         this.prompt = prompt;
         this.temperature = temperature;
-        this.max_tokens = max_tokens;
     }
 
 }
