@@ -22,4 +22,13 @@ public interface ChatGPTService {
 
     Map<String, Object> createCompletion(CompletionRequestDto completionRequestDto);
 
+    Map<String, Object> isValidModel(String modelName);
+
+
+    void chatGpt3Api();
+
+    void chatGpt3Service();
+
+    void chatGpt3Client();
+
 }
