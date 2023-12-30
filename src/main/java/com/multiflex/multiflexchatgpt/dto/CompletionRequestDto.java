@@ -23,8 +23,6 @@ public class CompletionRequestDto {
 
     private int max_tokens;
 
-    private Object messages;
-
     CompletionRequestDto(String model, String prompt, int temperature, int max_tokens) {
         this.model = model;
         this.prompt = prompt;
