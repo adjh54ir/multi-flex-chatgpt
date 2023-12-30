@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Please explain the class!!
+ * ChatGPT 서비스 인터페이스
  *
  * @author : lee
  * @fileName : ChatGPTService
@@ -17,18 +17,10 @@ import java.util.Map;
 @Service
 public interface ChatGPTService {
 
-
     List<Map<String, Object>> modelList();
 
-    Map<String, Object> createCompletion(CompletionRequestDto completionRequestDto);
+    Map<String, Object> prompt(CompletionRequestDto completionRequestDto);
 
     Map<String, Object> isValidModel(String modelName);
-
-
-    void chatGpt3Api();
-
-    void chatGpt3Service();
-
-    void chatGpt3Client();
 
 }

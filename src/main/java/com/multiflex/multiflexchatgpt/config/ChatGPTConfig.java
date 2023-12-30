@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * Please explain the class!!
+ * ChatGPT에서 사용하는 환경 구성
  *
  * @author : lee
  * @fileName : RestTemplate
@@ -17,19 +17,12 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class ChatGPTConfig {
 
-
     @Value("${openai.secret-key}")
     private String secretKey;
 
     @Bean
     public RestTemplate restTemplate() {
-
         RestTemplate restTemplate = new RestTemplate();
-
-//        restTemplate.getInterceptors().add((request, body, execution) -> {
-//            request.getHeaders().add("Authorization", "Bearer " + secretKey);
-//            return execution.execute(request, body);
-//        });
         return restTemplate;
     }
 
@@ -37,9 +30,8 @@ public class ChatGPTConfig {
     @Bean
     public HttpHeaders httpHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + secretKey);
+        headers.setBearerAuth(secretKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
         return headers;
-
     }
 }
