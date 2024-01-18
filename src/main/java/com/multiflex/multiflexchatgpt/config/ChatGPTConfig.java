@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
  *
  * @author : lee
  * @fileName : RestTemplate
- * @since : 12/29/23
+ * @since : 01/18/24
  */
 @Configuration
 public class ChatGPTConfig {
@@ -22,10 +22,8 @@ public class ChatGPTConfig {
 
     @Bean
     public RestTemplate restTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate;
+        return new RestTemplate();
     }
-
 
     @Bean
     public HttpHeaders httpHeaders() {

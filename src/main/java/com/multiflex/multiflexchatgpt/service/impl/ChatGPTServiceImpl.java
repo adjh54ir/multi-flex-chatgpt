@@ -5,14 +5,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.multiflex.multiflexchatgpt.config.ChatGPTConfig;
-import com.multiflex.multiflexchatgpt.dto.CompletionRequestDto;
+import com.multiflex.multiflexchatgpt.dto.ChatCompletionDto;
+import com.multiflex.multiflexchatgpt.dto.CompletionDto;
 import com.multiflex.multiflexchatgpt.service.ChatGPTService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,14 +37,23 @@ public class ChatGPTServiceImpl implements ChatGPTService {
         this.chatGPTConfig = chatGPTConfig;
     }
 
+    @Value("${openai.url.model}")
+    private String modelUrl;
 
-    @Value("${openai.model}")
-    private String model;
+    @Value("${openai.url.model-list}")
+    private String modelListUrl;
+
+    @Value("${openai.url.prompt}")
+    private String promptUrl;
+
+    @Value("${openai.url.legacy-prompt}")
+    private String legacyPromptUrl;
+
 
     /**
      * 사용 가능한 모델 리스트를 조회하는 비즈니스 로직
      *
-     * @return
+     * @return List<Map < String, Object>>
      */
     @Override
     public List<Map<String, Object>> modelList() {
@@ -52,14 +64,9 @@ public class ChatGPTServiceImpl implements ChatGPTService {
         HttpHeaders headers = chatGPTConfig.httpHeaders();
 
         // [STEP2] 통신을 위한 RestTemplate을 구성합니다.
-        ResponseEntity<String> response = chatGPTConfig.restTemplate()
-                .exchange(
-                        "https://api.openai.com/v1/models",
-                        HttpMethod.GET,
-                        new HttpEntity<>(headers),
-                        String.class);
-
-
+        ResponseEntity<String> response = chatGPTConfig
+                .restTemplate()
+                .exchange(modelUrl, HttpMethod.GET, new HttpEntity<>(headers), String.class);
         try {
             // [STEP3] Jackson을 기반으로 응답값을 가져옵니다.
             ObjectMapper om = new ObjectMapper();
@@ -77,6 +84,8 @@ public class ChatGPTServiceImpl implements ChatGPTService {
         } catch (JsonMappingException e) {
             log.debug("JsonMappingException :: " + e.getMessage());
         } catch (JsonProcessingException e) {
+            log.debug("JsonProcessingException :: " + e.getMessage());
+        } catch (RuntimeException e) {
             log.debug("RuntimeException :: " + e.getMessage());
         }
         return resultList;
@@ -86,31 +95,30 @@ public class ChatGPTServiceImpl implements ChatGPTService {
     /**
      * 모델이 유효한지 확인하는 비즈니스 로직
      *
-     * @param modelName
-     * @return
+     * @param modelName {}
+     * @return Map<String, Object>
      */
     @Override
     public Map<String, Object> isValidModel(String modelName) {
         log.debug("[+] 모델이 유효한지 조회합니다. 모델 : " + modelName);
-        Map<String, Object> result;
+        Map<String, Object> result = new HashMap<>();
 
         // [STEP1] 토큰 정보가 포함된 Header를 가져옵니다.
         HttpHeaders headers = chatGPTConfig.httpHeaders();
 
         // [STEP2] 통신을 위한 RestTemplate을 구성합니다.
-        ResponseEntity<String> response = chatGPTConfig.restTemplate()
-                .exchange(
-                        "https://api.openai.com/v1/models/" + modelName,
-                        HttpMethod.GET,
-                        new HttpEntity<>(headers),
-                        String.class);
+        ResponseEntity<String> response = chatGPTConfig
+                .restTemplate()
+                .exchange(modelListUrl + "/" + modelName, HttpMethod.GET, new HttpEntity<>(headers), String.class);
         try {
             // [STEP3] Jackson을 기반으로 응답값을 가져옵니다.
             ObjectMapper om = new ObjectMapper();
             result = om.readValue(response.getBody(), new TypeReference<>() {
             });
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            log.debug("JsonMappingException :: " + e.getMessage());
+        } catch (RuntimeException e) {
+            log.debug("RuntimeException :: " + e.getMessage());
         }
         return result;
     }
@@ -119,14 +127,12 @@ public class ChatGPTServiceImpl implements ChatGPTService {
     /**
      * ChatGTP 프롬프트 검색
      *
-     * @param completionRequestDto
-     * @return
+     * @param completionDto completionDto
+     * @return Map<String, Object>
      */
     @Override
-    public Map<String, Object> prompt(CompletionRequestDto completionRequestDto) {
+    public Map<String, Object> legacyPrompt(CompletionDto completionDto) {
         log.debug("[+] 프롬프트를 수행합니다.");
-
-        Map<String, Object> result = new HashMap<>();
 
         // [STEP1] 토큰 정보가 포함된 Header를 가져옵니다.
         HttpHeaders headers = chatGPTConfig.httpHeaders();
@@ -134,35 +140,79 @@ public class ChatGPTServiceImpl implements ChatGPTService {
         String requestBody = "";
         ObjectMapper om = new ObjectMapper();
 
-        // [STEP3] properties의 model을 가져와서 객체에 추가합니다.
-        completionRequestDto = completionRequestDto.builder()
-                .model(model)
-                .prompt(completionRequestDto.getPrompt())
-                .temperature(0.8f)
-                .build();
-
         try {
             // [STEP4] Object -> String 직렬화를 구성합니다.
-            requestBody = om.writeValueAsString(completionRequestDto);
+            requestBody = om.writeValueAsString(completionDto);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            log.debug("JsonMappingException :: " + e.getMessage());
+        } catch (RuntimeException e) {
+            log.debug("RuntimeException :: " + e.getMessage());
         }
 
         // [STEP5] 통신을 위한 RestTemplate을 구성합니다.
-        HttpEntity<CompletionRequestDto> requestEntity = new HttpEntity<>(completionRequestDto, headers);
-        ResponseEntity<String> response = chatGPTConfig.restTemplate()
-                .exchange(
-                        "https://api.openai.com/v1/completions",
-                        HttpMethod.POST,
-                        requestEntity,
-                        String.class);
+        HttpEntity<CompletionDto> requestEntity = new HttpEntity<>(completionDto, headers);
+        ResponseEntity<String> response = chatGPTConfig
+                .restTemplate()
+                .exchange(legacyPromptUrl, HttpMethod.POST, requestEntity, String.class);
+
+        Map<String, Object> resultMap = new HashMap<>();
         try {
             // [STEP6] String -> HashMap 역직렬화를 구성합니다.
-            result = om.readValue(response.getBody(), new TypeReference<>() {
+            resultMap = om.readValue(response.getBody(), new TypeReference<>() {
             });
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            log.debug("JsonMappingException :: " + e.getMessage());
+        } catch (RuntimeException e) {
+            log.debug("RuntimeException :: " + e.getMessage());
         }
-        return result;
+        return resultMap;
+    }
+
+
+    /**
+     * 신규 모델에 대한 프롬프트
+     *
+     * @param chatCompletionDto {}
+     * @return chatCompletionDto
+     */
+    @Override
+    public Map<String, Object> prompt(ChatCompletionDto chatCompletionDto) {
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        log.debug("[+] 프롬프트를 수행합니다.");
+
+        // [STEP1] 토큰 정보가 포함된 Header를 가져옵니다.
+        HttpHeaders headers = chatGPTConfig.httpHeaders();
+
+        String requestBody = "";
+        ObjectMapper om = new ObjectMapper();
+
+
+        try {
+            // [STEP4] Object -> String 직렬화를 구성합니다.
+            requestBody = om.writeValueAsString(chatCompletionDto);
+        } catch (JsonProcessingException e) {
+            log.debug("JsonMappingException :: " + e.getMessage());
+        } catch (RuntimeException e) {
+            log.debug("RuntimeException :: " + e.getMessage());
+        }
+
+        // [STEP5] 통신을 위한 RestTemplate을 구성합니다.
+        HttpEntity<ChatCompletionDto> requestEntity = new HttpEntity<>(chatCompletionDto, headers);
+        ResponseEntity<String> response = chatGPTConfig
+                .restTemplate()
+                .exchange(promptUrl, HttpMethod.POST, requestEntity, String.class);
+
+        try {
+            // [STEP6] String -> HashMap 역직렬화를 구성합니다.
+            resultMap = om.readValue(response.getBody(), new TypeReference<>() {
+            });
+        } catch (JsonProcessingException e) {
+            log.debug("JsonMappingException :: " + e.getMessage());
+        } catch (RuntimeException e) {
+            log.debug("RuntimeException :: " + e.getMessage());
+        }
+        return resultMap;
     }
 }
