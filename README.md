@@ -17,22 +17,21 @@
 
 <br><br>
 
-
 ## 2. 사용방법
 
-
-1. src/main/resources/config 패키지가 없다면 구성하며, 해당위치에 application-xxx-local.yml 형태의 파일을 생성합니다.  
+1. src/main/resources/config 패키지가 없다면 구성하며, 해당위치에 application-xxx-local.yml 형태의 파일을 생성합니다.
 
 
 2. 아래와 같은형태로 모델과 OpenAI에서 발급받은 키 값을 넣어줍니다.
+
  ```java
 openai:
-    model: text-davinci-001
-    secret-key: xxxxx
+model:gpt-3.5-turbo-instruct
+secret-key:xxxxx
 ```
-   
 
 3. application.properties 파일 내에 해당 yml 파일을 참조합니다.
+
  ```java
 spring.profiles.active=multiflex-xxx
 ```   
@@ -41,10 +40,11 @@ spring.profiles.active=multiflex-xxx
 
 ## 3. API Endpoint
 
-| End point                                       | 설명                    |
-|-------------------------------------------------|-----------------------|
-| http://localhost:8000//api/v1/chatGpt/modelList | 사용가능한 모델리스트를 조회합니다    |
-| http://localhost:8000//api/v1/chatGpt/model     | 유효한 모델인지 확인합니다.       |
-| http://localhost:8000//api/v1/chatGpt/prompt          | 프롬프트를 입력하여 결과값을 받습니다. |
+| End point                                          | 설명                                                                                   |
+|----------------------------------------------------|--------------------------------------------------------------------------------------|
+| http://localhost:8000//api/v1/chatGpt/modelList    | 사용 가능한 모델리스트를 조회합니다                                                                  |
+| http://localhost:8000//api/v1/chatGpt/model        | 유효한 모델인지 확인합니다.                                                                      |
+| http://localhost:8000//api/v1/chatGpt/legacyPrompt | 레거시 모델(gpt-3.5-turbo-instruct, babbage-002, davinci-002)을 사용하여 프롬프트를 입력하고 결과값을 받습니다. |
+| http://localhost:8000//api/v1/chatGpt/prompt       | 새로운 모델(gpt-4, gpt-4 turbo, gpt-3.5-turbo)을 사용하여 프롬프트를 입력하여 결과값을 받습니다.                |
 
 

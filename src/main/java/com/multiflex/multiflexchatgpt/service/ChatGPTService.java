@@ -1,6 +1,7 @@
 package com.multiflex.multiflexchatgpt.service;
 
-import com.multiflex.multiflexchatgpt.dto.CompletionRequestDto;
+import com.multiflex.multiflexchatgpt.dto.ChatCompletionDto;
+import com.multiflex.multiflexchatgpt.dto.CompletionDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +20,9 @@ public interface ChatGPTService {
 
     List<Map<String, Object>> modelList();
 
-    Map<String, Object> prompt(CompletionRequestDto completionRequestDto);
-
     Map<String, Object> isValidModel(String modelName);
 
+    Map<String, Object> legacyPrompt(CompletionDto completionDto);
+
+    Map<String, Object> prompt(ChatCompletionDto chatCompletionDto);
 }
