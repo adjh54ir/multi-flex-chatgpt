@@ -1,12 +1,15 @@
 # multi-flex-chatgpt
 
-⭕️ Spring Boot 기반의 ChatGPT 활용 방안 코드
+    ⭕️ Spring Boot 기반의 ChatGPT 활용 API
 
 ⭕️ 가이드 링크 : https://adjh54.tistory.com/372
 
 <br/><br/>
 
 ## 1. 개발환경
+
+![dacdc261-8c0c-4aa0-9377-718f2d9eda0a](https://github.com/adjh54ir/multi-flex-chatgpt/assets/70501374/dcd52b23-cea1-493e-b47f-4b32f20f39d1)
+
 
 | 환경 분류                   | 버전      |
 |-------------------------|---------|
@@ -22,11 +25,10 @@
 1. src/main/resources/config 패키지가 없다면 구성하며, 해당위치에 application-xxx-local.yml 형태의 파일을 생성합니다.
 
 
-2. 아래와 같은형태로 모델과 OpenAI에서 발급받은 키 값을 넣어줍니다.
+2. 아래와 OpenAI에서 발급받은 키 값을 넣어줍니다.
 
  ```java
 openai:
-model:gpt-3.5-turbo-instruct
 secret-key:xxxxx
 ```
 
