@@ -44,12 +44,38 @@ spring.profiles.active=multiflex-xxx
 
 ## 3. API Endpoint
 
-| End point                                          | 설명                                                                                   |
-|----------------------------------------------------|--------------------------------------------------------------------------------------|
-| http://localhost:8000//api/v1/chatGpt/modelList    | 사용 가능한 모델리스트를 조회합니다                                                                  |
-| http://localhost:8000//api/v1/chatGpt/model        | 유효한 모델인지 확인합니다.                                                                      |
-| http://localhost:8000//api/v1/chatGpt/legacyPrompt | 레거시 모델(gpt-3.5-turbo-instruct, babbage-002, davinci-002)을 사용하여 프롬프트를 입력하고 결과값을 받습니다. |
-| http://localhost:8000//api/v1/chatGpt/prompt       | 새로운 모델(gpt-4, gpt-4 turbo, gpt-3.5-turbo)을 사용하여 프롬프트를 입력하여 결과값을 받습니다.                |
+| End point                                          | HTTP METHOD | 설명                                                                                   |
+|----------------------------------------------------|:------------|--------------------------------------------------------------------------------------|
+| http://localhost:8000//api/v1/chatGpt/modelList    | GET         | 사용 가능한 모델리스트를 조회합니다                                                                  |
+| http://localhost:8000//api/v1/chatGpt/model        | GET         | 유효한 모델인지 확인합니다.                                                                      |
+| http://localhost:8000//api/v1/chatGpt/legacyPrompt | POST        | 레거시 모델(gpt-3.5-turbo-instruct, babbage-002, davinci-002)을 사용하여 프롬프트를 입력하고 결과값을 받습니다. |
+| http://localhost:8000//api/v1/chatGpt/prompt       | POST        | 새로운 모델(gpt-4, gpt-4 turbo, gpt-3.5-turbo)을 사용하여 프롬프트를 입력하여 결과값을 받습니다.                |
+
+    ⭕️ Request Format
+
+<br/>
+
+### 1. 모델 리스트 조회
+
+![다운로드](https://github.com/adjh54ir/multi-flex-chatgpt/assets/70501374/27c1515a-ff80-4c56-9953-507d7fd91957)
+
+<br/>
+
+### 2. 유효한 모델 조회
+
+![다운로드 (1)](https://github.com/adjh54ir/multi-flex-chatgpt/assets/70501374/51d5e93f-b6e4-4411-b845-a83cd95dff03)
+
+<br/>
+
+### 3. 레거시 모델(gpt-3.5-turbo-instruct, babbage-002, davinci-002) 조회
+
+![다운로드 (2)](https://github.com/adjh54ir/multi-flex-chatgpt/assets/70501374/4b67446b-6874-4039-9407-4835190f839a)
+
+<br/>
+
+### 4. 새로운 모델(gpt-4, gpt-4 turbo, gpt-3.5-turbo) 조회
+
+![다운로드 (3)](https://github.com/adjh54ir/multi-flex-chatgpt/assets/70501374/bc0132c3-7504-4cdc-9be9-e42f091da594)
 
 ## 4. Versions
 
